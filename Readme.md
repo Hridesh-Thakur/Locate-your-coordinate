@@ -63,9 +63,6 @@ Animated-3D-Globe/
 
 - [ ] Drag to rotate manually
 - [ ] Zoom in / out
-- [ ] Multiple labeled markers with names
-- [ ] Search a city and fly to its location
-- [ ] Day / night shading
 
 ## 🤝 Contributing
 
