@@ -1,11 +1,15 @@
+// Js file of this project
+// importing three.js and OrbitControls from a CDN
 import * as THREE from "https://esm.sh/three@0.133.1/build/three.module";
 import {OrbitControls} from "https://esm.sh/three@0.133.1/examples/jsm/controls/OrbitControls";
 
+// making const references to the DOM elements
 const containerEl = document.querySelector(".globe-wrapper");
 const canvas3D = containerEl.querySelector("#globe-3d");
 const canvas2D = containerEl.querySelector("#globe-2d-overlay");
 const popupEl = containerEl.querySelector(".globe-popup");
 
+// declaring variables for the 3D scene, camera, renderer, and other components
 let renderer, scene, camera, rayCaster, controls, group;
 let overlayCtx = canvas2D.getContext("2d");
 let coordinates2D = [0, 0];
@@ -15,12 +19,14 @@ let popupVisible;
 let earthTexture, mapMaterial;
 let popupOpenTl, popupCloseTl;
 
+// flag to track if the user has dragged the globe
 let dragged = false;
 
+// initializing the 3D scene and setting up event listeners for window resize
 initScene();
 window.addEventListener("resize", updateSize);
 
-
+// initializing the 3D scene, loading the earth texture, and creating the globe, pointer, and popup timelines
 function initScene() {
     renderer = new THREE.WebGLRenderer({canvas: canvas3D, alpha: true});
 	renderer.setPixelRatio(2);
@@ -52,7 +58,7 @@ function initScene() {
         });
 }
 
-
+// creating orbit controls for the camera, disabling panning and zooming, and enabling auto-rotation
 function createOrbitControls() {
     controls = new OrbitControls(camera, canvas3D);
     controls.enablePan = false;
@@ -71,6 +77,7 @@ function createOrbitControls() {
     });
 }
 
+// creating the globe using an icosahedron geometry and applying a shader material with the earth texture
 function createGlobe() {
     const globeGeometry = new THREE.IcosahedronGeometry(1, 22);
     mapMaterial = new THREE.ShaderMaterial({
@@ -97,6 +104,7 @@ function createGlobe() {
     scene.add(globeMesh);
 }
 
+// creating a pointer using a sphere geometry and adding it to the scene
 function createPointer() {
     const geometry = new THREE.SphereGeometry(.04, 16, 16);
     const material = new THREE.MeshBasicMaterial({
@@ -109,6 +117,7 @@ function createPointer() {
 }
 
 
+// updating the overlay graphic (popup and connector line) based on the pointer's position and visibility
 function updateOverlayGraphic() {
     let activePointPosition = pointer.position.clone();
     activePointPosition.applyMatrix4(globe.matrixWorld);
@@ -155,6 +164,7 @@ function updateOverlayGraphic() {
     }
 }
 
+// adding event listeners for mouse movement and clicks on the canvas, updating the mouse position, and checking for intersections with the globe
 function addCanvasEvents() {
     containerEl.addEventListener("mousemove", (e) => {
         updateMousePosition(e.clientX, e.clientY);
@@ -185,6 +195,7 @@ function addCanvasEvents() {
     }
 }
 
+// checking for intersections between the mouse position and the globe, updating the cursor style based on whether an intersection is detected
 function checkIntersects() {
     rayCaster.setFromCamera(mouse, camera);
     const intersects = rayCaster.intersectObject(globeMesh);
@@ -196,6 +207,7 @@ function checkIntersects() {
     return intersects;
 }
 
+// rendering the scene, updating the time since the last click, checking for intersections, updating the overlay graphic if the pointer is visible, and requesting the next animation frame
 function render() {
     mapMaterial.uniforms.u_time_since_click.value = clock.getElapsedTime();
     checkIntersects();
@@ -207,6 +219,7 @@ function render() {
     requestAnimationFrame(render);
 }
 
+// updating the size of the renderer and overlay canvas based on the window size, maintaining a minimum side length and adjusting the dot size in the shader material accordingly
 function updateSize() {
     const minSide = .65 * Math.min(window.innerWidth, window.innerHeight);
     containerEl.style.width = minSide + "px";
@@ -221,6 +234,7 @@ function updateSize() {
 //  HELPERS
 
 // popup content
+// converting the pointer's position from Cartesian coordinates to latitude and longitude, formatting the coordinates with appropriate directional indicators, and returning the formatted string for display in the popup
 function cartesianToLatLong() {
     const pos = pointer.position;
     const lat = 90 - Math.acos(pos.y) * 180 / Math.PI;
@@ -228,6 +242,7 @@ function cartesianToLatLong() {
     return formatCoordinate(lat, 'N', 'S') + ",&nbsp;" + formatCoordinate(lng, 'E', 'W');
 }
 
+// formatting a coordinate value with a specified positive and negative directional indicator, returning the formatted string with the absolute value of the coordinate rounded to four decimal places
 function formatCoordinate(coordinate, positiveDirection, negativeDirection) {
     const direction = coordinate >= 0 ? positiveDirection : negativeDirection;
     return `${Math.abs(coordinate).toFixed(4)}°&nbsp${direction}`;
@@ -278,6 +293,7 @@ function createPopupTimelines() {
         }, 0);
 }
 
+// showing the popup animation by scaling the pointer's position and animating it using GSAP, pausing the close timeline and playing the open timeline
 function showPopupAnimation(lifted) {
     if (lifted) {
         let positionLifted = pointer.position.clone();
