@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 
+
   <head>
     <meta charset="UTF-8">
     <title>Animated Globe | @Hridesh-Thakur</title>
@@ -9,6 +10,8 @@
   </head>
     
   <body>
+<!-- Defines the HTML layout for the 3D globe, its visual overlays,
+the click instruction, and the popup interface. -->
   <div class="page">
 	 <div class="title">click to add a pointer</div>
     <div class="globe-wrapper">
@@ -20,6 +23,18 @@
     </div>
 </div>
 
+<!-- 
+Fragment Shader for the 3D Globe Map:
+- Samples the Earth's map texture to obtain RGB colors.
+- Uses UV coordinates to determine which part of the map to display.
+- Adjusts the color intensity based on the distance from the center of each point.
+- Creates circular dots using the smoothstep() function.
+- Discards pixels outside the specified circular boundary.
+- Controls the transparency of each dot using vOpacity.
+- Outputs the final color and opacity for rendering through WebGL.
+
+Purpose: Creates the textured, dotted appearance of the 3D globe.
+-->
 <script type="x-shader/x-fragment" id="fragment-shader-map">
     uniform sampler2D u_map_tex;
 
@@ -34,6 +49,24 @@
         gl_FragColor = vec4(color, dot * vOpacity);
     }
 </script>
+
+
+<!--
+Vertex Shader for the 3D Globe Map:
+- Reads the Earth's map texture to determine which points should be visible.
+- Sets the size of each point based on the map visibility and u_dot_size.
+- Calculates the opacity of points based on their position relative to the camera,
+  helping make points on the back of the globe appear more transparent.
+- Tracks the time elapsed since the user clicked to create a ripple effect.
+- Calculates the ripple's distance, amplitude, and damping over time.
+- Creates an expanding ripple effect around the user's pointer position.
+- Adjusts the position of each point to simulate the ripple animation.
+- Transforms the 3D point positions into screen coordinates using the
+  model-view and projection matrices.
+
+Purpose: Controls the positions, sizes, visibility, opacity, and ripple
+animation of points that form the 3D globe.
+-->
 
 <script type="x-shader/x-vertex" id="vertex-shader-map">
     uniform sampler2D u_map_tex;
@@ -73,7 +106,20 @@
         gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.);
     }
 </script>
-    <script src='https://unpkg.com/gsap@3/dist/gsap.min.js'></script><script type="module" src="./script.js"></script>
+
+<!--
+External Libraries and JavaScript Module:
+- Loads the GSAP (GreenSock Animation Platform) library from a CDN.
+- GSAP is used to create smooth animations, transitions, and motion effects.
+- Loads the local script.js file as an ES module using type="module".
+- script.js contains the main JavaScript logic for the 3D globe,
+  including its rendering, animation, and user interactions.
+
+Purpose: Imports the GSAP animation library and the project's main
+JavaScript module to make the 3D globe interactive and animated.
+-->
+    <script src='https://unpkg.com/gsap@3/dist/gsap.min.js'></script>
+    <script type="module" src="./script.js"></script>
 
   </body>
   
