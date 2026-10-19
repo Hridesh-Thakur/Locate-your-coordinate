@@ -1,4 +1,4 @@
-# 🌍 Animated 3D Globe
+# 🌍 Animated 3D Globe 
 
 An interactive, animated 3D globe built with **HTML, CSS and JavaScript**. The Earth is rendered as a sphere of colored dots that you can rotate, and you can click anywhere on the land to drop a pointer that shows the exact latitude and longitude of that spot.
 
