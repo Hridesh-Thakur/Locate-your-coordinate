@@ -11,7 +11,7 @@ An interactive, animated 3D globe built with **HTML, CSS and JavaScript**. The E
 - Lightweight: no build step, runs directly in the browser
 
 ## 📁 Project Structure
-
+ 
 ```
 Animated-3D-Globe/
 ├── .vscode/
